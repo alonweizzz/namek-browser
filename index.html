@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https:; style-src 'self'; script-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'">
+  <title>Namek Browser</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-theme="dark">
+  <div class="chrome">
+    <header class="tab-strip">
+      <div class="brand"><div class="brand-mark">N</div><span>NAMEK<span class="brand-light">BROWSER</span></span></div>
+      <div id="tabs" class="tabs"></div>
+      <button id="new-tab" class="tab-add" title="New tab">＋</button>
+      <div class="window-controls"><button id="minimize" title="Minimize">─</button><button id="maximize" title="Maximize">▢</button><button id="close" title="Close">✕</button></div>
+    </header>
+    <div class="toolbar">
+      <div class="nav-buttons"><button id="back" title="Back">←</button><button id="forward" title="Forward">→</button><button id="reload" title="Reload">↻</button><button id="home" title="Home">⌂</button></div>
+      <form id="address-form" class="address"><span class="address-lock">✦</span><input id="address" autocomplete="off" spellcheck="false" placeholder="Search the universe or enter an address..." aria-label="Address and search" /><button type="submit" title="Go">↗</button></form>
+      <button id="bookmark" title="Bookmark page">☆</button><button id="panel-toggle" title="Your Namek collection">☷</button><button id="theme" title="Toggle light/dark">☾</button>
+    </div>
+  </div>
+  <main id="home-screen" class="home-screen">
+    <div class="stars"></div>
+    <div class="planet"><div class="planet-shine"></div><div class="planet-band band-one"></div><div class="planet-band band-two"></div></div>
+    <section class="hero">
+      <div class="eyebrow"><span class="pulse"></span> WELCOME TO PLANET NAMEK <span class="eyebrow-line"></span> UNIVERSE 7</div>
+      <h1>Explore a new <em>universe.</em></h1>
+      <p>Your portal to the web. Powered by curiosity, inspired by Namek.</p>
+      <form id="hero-search" class="hero-search"><span>⌕</span><input id="hero-query" placeholder="Where shall we explore today?" aria-label="Search the web"/><button type="submit">Explore ↗</button></form>
+      <div class="section-heading"><span>QUICK LAUNCH</span><span class="line"></span><span>YOUR FAVORITE DIMENSIONS</span></div>
+      <div class="shortcuts">
+        <button class="shortcut" data-url="https://www.youtube.com"><span class="shortcut-icon youtube">▶</span><strong>YouTube</strong><small>Watch & discover</small></button>
+        <button class="shortcut" data-url="https://www.google.com"><span class="shortcut-icon google">G</span><strong>Google</strong><small>Search anything</small></button>
+        <button class="shortcut" data-url="https://www.crunchyroll.com"><span class="shortcut-icon anime">◉</span><strong>Crunchyroll</strong><small>Anime streaming</small></button>
+        <button class="shortcut" data-url="https://dragonball.fandom.com/wiki/Dragon_Ball_Wiki"><span class="shortcut-icon dragon">✶</span><strong>Dragon Ball</strong><small>Explore the lore</small></button>
+      </div>
+      <div class="lower"><div class="quote-card"><span class="quote-label">✦ NAMEK TRANSMISSION / 001</span><div class="quote">“Power comes in response to a need, not a desire.”</div><small>— GOKU · DRAGON BALL Z</small></div><div class="power-card"><span class="quote-label">SCOUTER STATUS</span><div class="power-circle">✦</div><strong>POWER LEVEL: OVER 9000</strong><small>READY FOR EXPLORATION</small></div></div>
+    </section>
+    <footer class="footer"><span>✧ NAMEK BROWSER <i>·</i> BUILT FOR EXPLORERS</span><span>EARTH · UNIVERSE 7 <i>·</i> v0.1</span></footer>
+  </main>
+  <aside id="side-panel" class="side-panel hidden"><div class="panel-header"><strong>MY CAPSULES</strong><button id="panel-close" title="Close panel">✕</button></div><div class="panel-tabs"><button class="active" data-section="bookmarks">Bookmarks</button><button data-section="history">History</button><button data-section="downloads">Downloads</button></div><div id="panel-items" class="panel-items"></div><button id="clear-history" class="clear-history hidden">Clear history</button></aside>
+  <script src="renderer.js"></script>
+</body>
+</html>
