@@ -93,6 +93,9 @@ document.addEventListener('keydown', (event) => {
   if (event.ctrlKey && event.key.toLowerCase() === 't') { event.preventDefault(); send('new-tab'); }
   if (event.ctrlKey && event.key.toLowerCase() === 'w') { event.preventDefault(); send('close-tab', state.activeId); }
   if (event.ctrlKey && event.key.toLowerCase() === 'd') { event.preventDefault(); send('bookmark'); }
+  if (event.key === 'F5') { event.preventDefault(); send('reload'); }
+  if (event.altKey && event.key === 'ArrowLeft') { event.preventDefault(); send('back'); }
+  if (event.altKey && event.key === 'ArrowRight') { event.preventDefault(); send('forward'); }
   if (event.key === 'Escape') $('#side-panel').classList.add('hidden');
 });
 api.onState(render);

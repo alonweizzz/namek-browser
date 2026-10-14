@@ -1,0 +1,1 @@
+To verify this site in Google Search Console, use the URL-prefix property https://alonweizzz.github.io/namek-browser/ and select an available verification method. Do not publish a fabricated verification token.

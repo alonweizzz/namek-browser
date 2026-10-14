@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://alonweizzz.github.io/namek-browser/sitemap.xml

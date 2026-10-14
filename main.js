@@ -1,4 +1,4 @@
-const { app, BrowserWindow, WebContentsView, ipcMain, session, dialog, shell } = require('electron');
+const { app, BrowserWindow, WebContentsView, ipcMain, session } = require('electron');
 const path = require('node:path');
 const fs = require('node:fs');
 const { URL } = require('node:url');
@@ -95,6 +95,7 @@ function createWebView(tab) {
   view.webContents.on('will-navigate', (event, url) => {
     if (!/^https?:\/\//i.test(url)) event.preventDefault();
   });
+  view.webContents.on('render-process-gone', () => { tab.loading = false; tab.title = 'Tab crashed — reload to retry'; publish(); });
   view.webContents.on('did-start-loading', () => { tab.loading = true; publish(); });
   view.webContents.on('did-stop-loading', () => { tab.loading = false; publish(); });
   view.webContents.on('page-title-updated', (_event, title) => { tab.title = String(title).slice(0, 100); publish(); });
@@ -181,6 +182,8 @@ function createWindow() {
   });
   win.loadFile('index.html');
   win.on('resize', resize);
+  win.on('enter-full-screen', resize);
+  win.on('leave-full-screen', resize);
   win.on('maximize', publish);
   win.on('unmaximize', publish);
   win.on('closed', () => { win = null; });
