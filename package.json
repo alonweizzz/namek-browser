@@ -1,6 +1,6 @@
 {
   "name": "namek-browser",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A Namek-inspired desktop browser for Dragon Ball fans",
   "main": "main.js",
   "author": "Namek Browser",
@@ -31,11 +31,15 @@
       "target": [
         "nsis"
       ],
-      "artifactName": "Namek-Browser-${version}-Setup.${ext}"
+      "artifactName": "Namek-Browser-${version}-Setup.${ext}",
+      "icon": "assets/namek.ico"
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "assets/namek.ico",
+      "uninstallerIcon": "assets/namek.ico",
+      "installerHeaderIcon": "assets/namek.ico"
     }
   }
 }
