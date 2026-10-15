@@ -16,7 +16,7 @@ on:
       - '.github/workflows/windows-build.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build-windows:
@@ -39,6 +39,17 @@ jobs:
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
         run: npm run dist -- --publish never
+      - name: Publish rolling Windows download
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          gh release delete latest --yes --cleanup-tag --repo $env:GITHUB_REPOSITORY 2>$null
+          if ($LASTEXITCODE -ne 0) { Write-Host 'No previous latest release to delete' }
+          gh release create latest 'dist/Namek-Browser-*-Setup.exe' --repo $env:GITHUB_REPOSITORY --title 'Namek Browser — Latest Windows Build' --notes 'Latest successful Windows x64 installer. This is an unsigned prototype build; Windows SmartScreen may warn.' --latest
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Upload Windows EXE installer
         uses: actions/upload-artifact@v4
         with:
