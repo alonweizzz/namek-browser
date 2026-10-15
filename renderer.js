@@ -4,6 +4,22 @@ let state = { tabs: [], activeId: null, bookmarks: [], history: [], downloads: [
 let panelSection = 'bookmarks';
 let addressEditing = false;
 let settingsOpen = false;
+const translations = {
+  en: {kicker:'✦ YOUR GATEWAY TO THE UNIVERSE',headline:'Beyond the <em>ordinary.</em>',subtitle:'New worlds are one search away. Where will your next journey take you?',searchPlaceholder:'Search the universe or enter a destination...',launch:'Launch ↗',portals:'✦ QUICK PORTALS',capsules:'MY CAPSULES',bookmarks:'Bookmarks',history:'History',downloads:'Downloads',settings:'NAMEK SETTINGS',personalize:'Make Namek your own.',engine:'Default search engine',language:'Interface language',background:'Home background',upload:'Upload background image (PNG, JPG, WebP, max 1 MB)',reset:'Reset background',restore:'↶ Restore last closed tab'},
+  he: {kicker:'✦ השער שלך ליקום',headline:'מעבר <em>לרגיל.</em>',subtitle:'עולמות חדשים נמצאים במרחק חיפוש אחד. לאן נצא היום?',searchPlaceholder:'חיפוש ביקום או הזנת כתובת...',launch:'צא לדרך ↗',portals:'✦ אתרים מהירים',capsules:'הקפסולות שלי',bookmarks:'מועדפים',history:'היסטוריה',downloads:'הורדות',settings:'הגדרות נאמק',personalize:'התאם את נאמק לטעם שלך.',engine:'מנוע חיפוש ברירת מחדל',language:'שפת הממשק',background:'רקע דף הבית',upload:'העלאת תמונת רקע (PNG, JPG, WebP, עד 1MB)',reset:'איפוס רקע',restore:'↶ שחזור הטאב האחרון'}
+};
+function applyPreferences() {
+  const lang = state.language === 'he' ? 'he' : 'en'; const dict = translations[lang];
+  document.documentElement.lang = lang;
+  $('#language').value = lang;
+  $('#home-background').value = state.homeBackground || 'namek';
+  $('#home-screen').dataset.background = state.homeBackground || 'namek';
+  $('#home-screen').style.setProperty('--custom-home-image', state.homeBackground === 'custom' && state.customBackground ? 'url("' + state.customBackground + '")' : 'none');
+  document.querySelectorAll('[data-i18n]').forEach(node => { node.textContent = dict[node.dataset.i18n] || node.textContent; });
+  document.querySelectorAll('[data-i18n-html]').forEach(node => { if (node.dataset.i18nHtml === 'headline') node.innerHTML = dict.headline; });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(node => { node.placeholder = dict[node.dataset.i18nPlaceholder] || node.placeholder; });
+}
+
 function send(command, payload) { return api.call(command, payload); }
 function el(tag, className, text) {
   const element = document.createElement(tag);
@@ -81,6 +97,7 @@ function render(incoming) {
   $('#bookmark').textContent = state.bookmarks.some(b => b.url === tab?.url) ? '★' : '☆';
   $('#bookmark').style.color = 'var(--accent)';
   $('#search-engine').value = state.searchEngine || 'google';
+  applyPreferences();
   renderTabs();
   renderPanel();
 }
@@ -105,6 +122,15 @@ $('#panel-close').addEventListener('click', () => setPanel(false));
 $('#settings-toggle').addEventListener('click', () => { settingsOpen = !settingsOpen; $('#settings-panel').classList.toggle('hidden', !settingsOpen); });
 $('#settings-close').addEventListener('click', () => { settingsOpen = false; $('#settings-panel').classList.add('hidden'); });
 $('#search-engine').addEventListener('change', e => send('search-engine', e.target.value));
+$('#language').addEventListener('change', e => send('language', e.target.value));
+$('#home-background').addEventListener('change', e => send('home-background', e.target.value));
+$('#reset-background').addEventListener('click', () => { $('#background-file').value = ''; $('#background-error').textContent = ''; send('reset-background'); });
+$('#background-file').addEventListener('change', async event => {
+  const file = event.target.files?.[0]; if (!file) return;
+  const error = $('#background-error'); error.textContent = '';
+  if (!['image/png','image/jpeg','image/webp'].includes(file.type) || file.size > 1000000) { error.textContent = 'Please choose a PNG, JPG or WebP image under 1 MB.'; return; }
+  const reader = new FileReader(); reader.onload = () => { if (typeof reader.result === 'string') send('custom-background', reader.result); }; reader.onerror = () => { error.textContent = 'Could not read image.'; }; reader.readAsDataURL(file);
+});
 $('#restore-tab').addEventListener('click', () => send('restore-tab'));
 document.addEventListener('click', event => { if (!event.target.closest('#tab-menu')) $('#tab-menu').classList.add('hidden'); });
 api.onFocusAddress?.(() => $('#address').focus());
