@@ -19,7 +19,7 @@
     <div class="toolbar">
       <div class="nav-buttons"><button id="back" title="Back">←</button><button id="forward" title="Forward">→</button><button id="reload" title="Reload">↻</button><button id="home" title="Home">⌂</button></div>
       <form id="address-form" class="address"><span class="address-lock">✦</span><input id="address" autocomplete="off" spellcheck="false" placeholder="Search the universe or enter an address..." aria-label="Address and search" /><button type="submit" title="Go">↗</button></form>
-      <button id="bookmark" title="Bookmark page">☆</button><button id="panel-toggle" title="Your Namek collection">☷</button><button id="theme" title="Toggle light/dark">☾</button>
+      <button id="bookmark" title="Bookmark page">☆</button><button id="panel-toggle" title="Your Namek collection">☷</button><button id="theme" title="Toggle light/dark">☾</button><button id="settings-toggle" title="Settings">⚙</button>
     </div>
   </div>
   <main id="home-screen" class="home-screen home-v2">
@@ -45,6 +45,8 @@
     <footer class="footer v2-footer"><span>✧ NAMEK BROWSER <i>·</i> NEXT GENERATION</span><span>V2 PREVIEW <i>·</i> DEVELOPMENT BUILD</span></footer>
   </main>
   <aside id="side-panel" class="side-panel hidden"><div class="panel-header"><strong>MY CAPSULES</strong><button id="panel-close" title="Close panel">✕</button></div><div class="panel-tabs"><button class="active" data-section="bookmarks">Bookmarks</button><button data-section="history">History</button><button data-section="downloads">Downloads</button></div><div id="panel-items" class="panel-items"></div><button id="clear-history" class="clear-history hidden">Clear history</button></aside>
+  <div id="tab-menu" class="tab-menu hidden"></div>
+  <aside id="settings-panel" class="settings-panel hidden"><div class="panel-header"><strong>NAMEK SETTINGS</strong><button id="settings-close" title="Close settings">✕</button></div><p>Make Namek your own.</p><label for="search-engine">Default search engine</label><select id="search-engine"><option value="google">Google</option><option value="duckduckgo">DuckDuckGo</option><option value="bing">Bing</option></select><button id="restore-tab" class="settings-action">↶ Restore last closed tab</button><p class="settings-tip">Right-click a tab to duplicate or pin it. Ctrl+Shift+T restores a closed tab.</p></aside>
   <script src="renderer.js"></script>
 </body>
 </html>

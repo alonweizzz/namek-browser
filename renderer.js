@@ -3,6 +3,7 @@ const api = window.namek;
 let state = { tabs: [], activeId: null, bookmarks: [], history: [], downloads: [], theme: 'dark' };
 let panelSection = 'bookmarks';
 let addressEditing = false;
+let settingsOpen = false;
 function send(command, payload) { return api.call(command, payload); }
 function el(tag, className, text) {
   const element = document.createElement(tag);
@@ -13,18 +14,27 @@ function el(tag, className, text) {
 function renderTabs() {
   const host = $('#tabs'); host.replaceChildren();
   for (const tab of state.tabs) {
-    const button = el('button', 'tab' + (tab.id === state.activeId ? ' active' : ''));
+    const button = el('button', 'tab' + (tab.id === state.activeId ? ' active' : '') + (tab.pinned ? ' pinned' : ''));
     button.title = tab.title;
-    const mark = el('span', '', tab.loading ? '◌' : '✦');
+    const mark = el('span', '', tab.pinned ? '📌' : tab.loading ? '◌' : '✦');
     mark.style.color = 'var(--accent)';
     const text = el('span', 'tab-label', tab.title || 'New Tab');
-    const close = el('span', 'tab-close', '×');
+    const close = el('span', 'tab-close', tab.pinned ? '●' : '×');
     close.title = 'Close tab';
-    close.addEventListener('click', (event) => { event.stopPropagation(); send('close-tab', tab.id); });
+    close.addEventListener('click', (event) => { event.stopPropagation(); if (!tab.pinned) send('close-tab', tab.id); });
+    button.addEventListener('contextmenu', event => { event.preventDefault(); showTabMenu(event.clientX, event.clientY, tab); });
     button.append(mark, text, close);
     button.addEventListener('click', () => send('select-tab', tab.id));
     host.append(button);
   }
+}
+function showTabMenu(x, y, tab) {
+  const menu = $('#tab-menu'); menu.replaceChildren();
+  for (const [label, command] of [['Duplicate tab', 'duplicate-tab'], [tab.pinned ? 'Unpin tab' : 'Pin tab', 'pin-tab'], ['Close tab', 'close-tab']]) {
+    const b = el('button', '', label); b.disabled = command === 'close-tab' && tab.pinned;
+    b.addEventListener('click', () => { send(command, tab.id); menu.classList.add('hidden'); }); menu.append(b);
+  }
+  menu.style.left = Math.min(x, window.innerWidth - 190) + 'px'; menu.style.top = Math.min(y, window.innerHeight - 155) + 'px'; menu.classList.remove('hidden');
 }
 function renderPanel() {
   const host = $('#panel-items'); host.replaceChildren();
@@ -34,11 +44,19 @@ function renderPanel() {
   for (const item of items) {
     const row = el('div', 'panel-item');
     if (panelSection === 'downloads') {
-      row.append(el('span', '', item.name + ' · ' + item.status));
+      const info = el('div', 'download-info');
+      info.append(el('strong', '', item.name));
+      info.append(el('small', '', item.status + (item.progress == null ? '' : ' · ' + item.progress + '%')));
+      if (item.status === 'downloading' && item.progress != null) { const track = el('div', 'progress-track'); const fill = el('div', 'progress-fill'); fill.style.width = item.progress + '%'; track.append(fill); info.append(track); }
+      row.append(info);
+      const actions = el('div', 'download-actions');
+      if (item.status === 'completed') { for (const [label, command] of [['Open','open-download'],['Folder','show-download']]) { const b = el('button','',label); b.addEventListener('click',()=>send(command,item.id)); actions.append(b); } }
+      if (item.status === 'downloading' || item.status === 'paused') { const b = el('button','','Cancel'); b.addEventListener('click',()=>send('cancel-download',item.id)); actions.append(b); }
+      row.append(actions);
     } else {
       const link = el('button', '', item.title || item.url);
       link.title = item.url;
-      link.addEventListener('click', () => { send('open-bookmark', item.url); $('#side-panel').classList.add('hidden'); });
+      link.addEventListener('click', () => { send('open-bookmark', item.url); setPanel(false); });
       row.append(link);
       if (panelSection === 'bookmarks') {
         const remove = el('button', 'remove', '×');
@@ -62,6 +80,7 @@ function render(incoming) {
   $('#forward').disabled = !tab?.canGoForward;
   $('#bookmark').textContent = state.bookmarks.some(b => b.url === tab?.url) ? '★' : '☆';
   $('#bookmark').style.color = 'var(--accent)';
+  $('#search-engine').value = state.searchEngine || 'google';
   renderTabs();
   renderPanel();
 }
@@ -80,8 +99,15 @@ $('#address').addEventListener('focus', () => { addressEditing = true; $('#addre
 $('#address').addEventListener('blur', () => { addressEditing = false; render(state); });
 $('#hero-search').addEventListener('submit', (event) => { event.preventDefault(); send('navigate', $('#hero-query').value); });
 document.querySelectorAll('.shortcut').forEach(btn => btn.addEventListener('click', () => send('navigate', btn.dataset.url)));
-$('#panel-toggle').addEventListener('click', () => $('#side-panel').classList.toggle('hidden'));
-$('#panel-close').addEventListener('click', () => $('#side-panel').classList.add('hidden'));
+function setPanel(open) { $('#side-panel').classList.toggle('hidden', !open); send('panel-open', open); }
+$('#panel-toggle').addEventListener('click', () => setPanel($('#side-panel').classList.contains('hidden')));
+$('#panel-close').addEventListener('click', () => setPanel(false));
+$('#settings-toggle').addEventListener('click', () => { settingsOpen = !settingsOpen; $('#settings-panel').classList.toggle('hidden', !settingsOpen); });
+$('#settings-close').addEventListener('click', () => { settingsOpen = false; $('#settings-panel').classList.add('hidden'); });
+$('#search-engine').addEventListener('change', e => send('search-engine', e.target.value));
+$('#restore-tab').addEventListener('click', () => send('restore-tab'));
+document.addEventListener('click', event => { if (!event.target.closest('#tab-menu')) $('#tab-menu').classList.add('hidden'); });
+api.onFocusAddress?.(() => $('#address').focus());
 document.querySelectorAll('[data-section]').forEach(btn => btn.addEventListener('click', () => {
   panelSection = btn.dataset.section;
   document.querySelectorAll('[data-section]').forEach(b => b.classList.toggle('active', b === btn));
@@ -92,11 +118,14 @@ document.addEventListener('keydown', (event) => {
   if (event.ctrlKey && event.key.toLowerCase() === 'l') { event.preventDefault(); $('#address').focus(); }
   if (event.ctrlKey && event.key.toLowerCase() === 't') { event.preventDefault(); send('new-tab'); }
   if (event.ctrlKey && event.key.toLowerCase() === 'w') { event.preventDefault(); send('close-tab', state.activeId); }
+  if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 't') { event.preventDefault(); send('restore-tab'); }
+  if (event.ctrlKey && event.key === 'Tab') { event.preventDefault(); send('cycle-tab', event.shiftKey ? -1 : 1); }
+  if (event.ctrlKey && /^[1-9]$/.test(event.key)) { event.preventDefault(); send('tab-index', event.key === '9' ? state.tabs.length - 1 : Number(event.key) - 1); }
   if (event.ctrlKey && event.key.toLowerCase() === 'd') { event.preventDefault(); send('bookmark'); }
   if (event.key === 'F5') { event.preventDefault(); send('reload'); }
   if (event.altKey && event.key === 'ArrowLeft') { event.preventDefault(); send('back'); }
   if (event.altKey && event.key === 'ArrowRight') { event.preventDefault(); send('forward'); }
-  if (event.key === 'Escape') $('#side-panel').classList.add('hidden');
+  if (event.key === 'Escape') { setPanel(false); $('#settings-panel').classList.add('hidden'); $('#tab-menu').classList.add('hidden'); }
 });
 api.onState(render);
 send('ready').then(render);
