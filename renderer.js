@@ -116,7 +116,7 @@ document.querySelectorAll('[data-section]').forEach(btn => btn.addEventListener(
 $('#clear-history').addEventListener('click', () => send('clear-history'));
 document.addEventListener('keydown', (event) => {
   if (event.ctrlKey && event.key.toLowerCase() === 'l') { event.preventDefault(); $('#address').focus(); }
-  if (event.ctrlKey && event.key.toLowerCase() === 't') { event.preventDefault(); send('new-tab'); }
+  if (event.ctrlKey && !event.shiftKey && event.key.toLowerCase() === 't') { event.preventDefault(); send('new-tab'); }
   if (event.ctrlKey && event.key.toLowerCase() === 'w') { event.preventDefault(); send('close-tab', state.activeId); }
   if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 't') { event.preventDefault(); send('restore-tab'); }
   if (event.ctrlKey && event.key === 'Tab') { event.preventDefault(); send('cycle-tab', event.shiftKey ? -1 : 1); }
