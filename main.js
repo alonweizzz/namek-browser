@@ -14,6 +14,9 @@ let activeId = null;
 let nextId = 1;
 let theme = 'dark';
 let searchEngine = 'google';
+let language = 'en';
+let homeBackground = 'namek';
+let customBackground = '';
 let closedTabs = [];
 let panelOpen = false;
 let activeDownloads = new Map();
@@ -27,12 +30,15 @@ function loadData() {
     const data = JSON.parse(fs.readFileSync(dataFile(), 'utf8'));
     theme = data.theme === 'light' ? 'light' : 'dark';
     searchEngine = Object.hasOwn(SEARCH_ENGINES, data.searchEngine) ? data.searchEngine : 'google';
+    language = ['en','he'].includes(data.language) ? data.language : 'en';
+    homeBackground = ['namek','nebula','midnight','sunset','custom'].includes(data.homeBackground) ? data.homeBackground : 'namek';
+    customBackground = typeof data.customBackground === 'string' && data.customBackground.length < 1500000 && /^data:image\/(png|jpeg|webp);base64,/.test(data.customBackground) ? data.customBackground : '';
     bookmarks = Array.isArray(data.bookmarks) ? data.bookmarks.slice(0, 200) : [];
     history = Array.isArray(data.history) ? data.history.slice(0, 250) : [];
   } catch {}
 }
 function saveData() {
-  try { fs.writeFileSync(dataFile(), JSON.stringify({ theme, searchEngine, bookmarks, history }, null, 2)); } catch {}
+  try { fs.writeFileSync(dataFile(), JSON.stringify({ theme, searchEngine, language, homeBackground, customBackground, bookmarks, history }, null, 2)); } catch {}
 }
 function normalize(input) {
   const value = String(input || '').trim();
@@ -47,7 +53,7 @@ function normalize(input) {
 function currentTab() { return tabs.find(tab => tab.id === activeId); }
 function summarize() {
   return {
-    theme, searchEngine, canRestoreTab: closedTabs.length > 0, panelOpen, activeId, bookmarks, history: history.slice(0, 60), downloads: downloads.slice(0, 20),
+    theme, searchEngine, language, homeBackground, customBackground, canRestoreTab: closedTabs.length > 0, panelOpen, activeId, bookmarks, history: history.slice(0, 60), downloads: downloads.slice(0, 20),
     tabs: tabs.map(t => ({
       id: t.id, title: t.title, url: t.url, loading: t.loading, pinned: t.pinned,
       canGoBack: t.view ? t.view.webContents.canGoBack() : false,
@@ -196,6 +202,10 @@ function handleCommand(command, payload) {
     case 'back': case 'forward': case 'reload': case 'home': sendKeyCommand(command); break;
     case 'theme': setTheme(payload); break;
     case 'search-engine': if (Object.hasOwn(SEARCH_ENGINES, payload)) { searchEngine = payload; saveData(); publish(); } break;
+    case 'language': if (['en','he'].includes(payload)) { language = payload; saveData(); publish(); } break;
+    case 'home-background': if (['namek','nebula','midnight','sunset','custom'].includes(payload)) { homeBackground = payload; saveData(); publish(); } break;
+    case 'custom-background': if (typeof payload === 'string' && payload.length < 1500000 && /^data:image\/(png|jpeg|webp);base64,/.test(payload)) { customBackground = payload; homeBackground = 'custom'; saveData(); publish(); } break;
+    case 'reset-background': customBackground = ''; homeBackground = 'namek'; saveData(); publish(); break;
     case 'panel-open': panelOpen = Boolean(payload); resize(); publish(); break;
     case 'open-download': { const item = downloads.find(d => d.id === payload); if (item?.status === 'completed' && item.path && fs.existsSync(item.path)) shell.openPath(item.path); break; }
     case 'show-download': { const item = downloads.find(d => d.id === payload); if (item?.status === 'completed' && item.path && fs.existsSync(item.path)) shell.showItemInFolder(item.path); break; }
