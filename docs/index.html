@@ -31,6 +31,8 @@ body[data-theme="light"] .hero .planet{box-shadow:0 0 85px #38874b33,inset -30px
 @media(max-width:850px){.header .wrap{gap:12px}.site-controls{margin-left:auto}.header .btn.small{display:none}.brand{font-size:12px}.brand img{width:33px;height:33px}}
 @media(max-width:460px){.wrap{width:min(100% - 26px,1180px)}.brand{letter-spacing:.5px;font-size:10px}.site-controls select{max-width:85px;padding:9px 4px}.site-controls button{min-width:34px;padding:9px 7px}.hero .wrap{padding-top:45px}.hero h1{font-size:46px}.download{padding:25px}}
 
+/* Keep the brand logo and English wordmark in their original LTR order in Hebrew mode. */
+.brand{direction:ltr;unicode-bidi:isolate;flex-direction:row}.brand img{transform:none!important;flex-shrink:0}
 /* Namek website 3.2: install guide, roadmap, FAQ and polish */
 .install-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:34px}
 .install-step{position:relative;padding:28px;border:1px solid var(--edge);border-radius:18px;background:var(--surface)}
