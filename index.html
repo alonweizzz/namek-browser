@@ -22,24 +22,27 @@
       <button id="bookmark" title="Bookmark page">☆</button><button id="panel-toggle" title="Your Namek collection">☷</button><button id="theme" title="Toggle light/dark">☾</button>
     </div>
   </div>
-  <main id="home-screen" class="home-screen">
+  <main id="home-screen" class="home-screen home-v2">
     <div class="stars"></div>
     <div class="planet"><div class="planet-shine"></div><div class="planet-band band-one"></div><div class="planet-band band-two"></div></div>
-    <section class="hero">
-      <div class="eyebrow"><span class="pulse"></span> WELCOME TO PLANET NAMEK <span class="eyebrow-line"></span> UNIVERSE 7</div>
-      <h1>Explore a new <em>universe.</em></h1>
-      <p>Your portal to the web. Powered by curiosity, inspired by Namek.</p>
-      <form id="hero-search" class="hero-search"><span>⌕</span><input id="hero-query" placeholder="Where shall we explore today?" aria-label="Search the web"/><button type="submit">Explore ↗</button></form>
-      <div class="section-heading"><span>QUICK LAUNCH</span><span class="line"></span><span>YOUR FAVORITE DIMENSIONS</span></div>
-      <div class="shortcuts">
-        <button class="shortcut" data-url="https://www.youtube.com"><span class="shortcut-icon youtube">▶</span><strong>YouTube</strong><small>Watch & discover</small></button>
-        <button class="shortcut" data-url="https://www.google.com"><span class="shortcut-icon google">G</span><strong>Google</strong><small>Search anything</small></button>
-        <button class="shortcut" data-url="https://www.crunchyroll.com"><span class="shortcut-icon anime">◉</span><strong>Crunchyroll</strong><small>Anime streaming</small></button>
-        <button class="shortcut" data-url="https://dragonball.fandom.com/wiki/Dragon_Ball_Wiki"><span class="shortcut-icon dragon">✶</span><strong>Dragon Ball</strong><small>Explore the lore</small></button>
+    <div class="v2-orbit v2-orbit-one"></div><div class="v2-orbit v2-orbit-two"></div>
+    <section class="hero v2-hero">
+      <div class="v2-topline"><span><span class="pulse"></span> NAMEK SYSTEM ONLINE</span><span>UNIVERSE 7 <span class="v2-divider">/</span> EARTH SECTOR</span></div>
+      <div class="v2-intro"><span class="v2-kicker">✦ YOUR GATEWAY TO THE UNIVERSE</span><h1>Beyond the <em>ordinary.</em></h1><p>New worlds are one search away. Where will your next journey take you?</p></div>
+      <form id="hero-search" class="hero-search v2-search"><span>⌕</span><input id="hero-query" placeholder="Search the universe or enter a destination..." aria-label="Search the web" autocomplete="off"/><button type="submit">Launch ↗</button></form>
+      <div class="v2-section-heading"><span>✦ QUICK PORTALS</span><span class="v2-rule"></span><span>01 / 04</span></div>
+      <div class="shortcuts v2-shortcuts">
+        <button class="shortcut" data-url="https://www.youtube.com"><span class="shortcut-icon youtube">▶</span><strong>YouTube</strong><small>Entertainment</small><span class="v2-shortcut-arrow">↗</span></button>
+        <button class="shortcut" data-url="https://www.google.com"><span class="shortcut-icon google">G</span><strong>Google</strong><small>Search the web</small><span class="v2-shortcut-arrow">↗</span></button>
+        <button class="shortcut" data-url="https://www.crunchyroll.com"><span class="shortcut-icon anime">◉</span><strong>Crunchyroll</strong><small>Anime universe</small><span class="v2-shortcut-arrow">↗</span></button>
+        <button class="shortcut" data-url="https://dragonball.fandom.com/wiki/Dragon_Ball_Wiki"><span class="shortcut-icon dragon">✶</span><strong>Dragon Ball</strong><small>Explore the lore</small><span class="v2-shortcut-arrow">↗</span></button>
       </div>
-      <div class="lower"><div class="quote-card"><span class="quote-label">✦ NAMEK TRANSMISSION / 001</span><div class="quote">“Power comes in response to a need, not a desire.”</div><small>— GOKU · DRAGON BALL Z</small></div><div class="power-card"><span class="quote-label">SCOUTER STATUS</span><div class="power-circle">✦</div><strong>POWER LEVEL: OVER 9000</strong><small>READY FOR EXPLORATION</small></div></div>
+      <div class="v2-dashboard">
+        <div class="v2-transmission"><span class="v2-card-label">✦ TRANSMISSION FROM NAMEK</span><p>“The limits you see are only the beginning of your journey.”</p><small>NAMEK EXPLORER NETWORK · SIGNAL 001</small></div>
+        <div class="v2-scouter"><span class="v2-card-label">SCOUTER / SYSTEM STATUS</span><div class="v2-scouter-inner"><span class="v2-power-icon">✧</span><div><strong>9,001+</strong><small>POWER LEVEL · ONLINE</small></div></div></div>
+      </div>
     </section>
-    <footer class="footer"><span>✧ NAMEK BROWSER <i>·</i> BUILT FOR EXPLORERS</span><span>EARTH · UNIVERSE 7 <i>·</i> v0.1</span></footer>
+    <footer class="footer v2-footer"><span>✧ NAMEK BROWSER <i>·</i> NEXT GENERATION</span><span>V2 PREVIEW <i>·</i> DEVELOPMENT BUILD</span></footer>
   </main>
   <aside id="side-panel" class="side-panel hidden"><div class="panel-header"><strong>MY CAPSULES</strong><button id="panel-close" title="Close panel">✕</button></div><div class="panel-tabs"><button class="active" data-section="bookmarks">Bookmarks</button><button data-section="history">History</button><button data-section="downloads">Downloads</button></div><div id="panel-items" class="panel-items"></div><button id="clear-history" class="clear-history hidden">Clear history</button></aside>
   <script src="renderer.js"></script>
