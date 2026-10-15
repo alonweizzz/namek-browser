@@ -97,7 +97,7 @@ function createWebView(tab) {
   view.webContents.on('before-input-event', (event, input) => {
     if (input.type !== 'keyDown') return;
     const ctrl = input.control || input.meta;
-    if (ctrl && !input.alt && input.key.toLowerCase() === 't') { event.preventDefault(); addTab(); }
+    if (ctrl && !input.alt && !input.shift && input.key.toLowerCase() === 't') { event.preventDefault(); addTab(); }
     else if (ctrl && input.shift && input.key.toLowerCase() === 't') { event.preventDefault(); restoreTab(); }
     else if (ctrl && input.key.toLowerCase() === 'w') { event.preventDefault(); closeTab(activeId); }
     else if (ctrl && input.key.toLowerCase() === 'l') { event.preventDefault(); win.webContents.send('namek:focus-address'); }
@@ -199,7 +199,7 @@ function handleCommand(command, payload) {
     case 'panel-open': panelOpen = Boolean(payload); resize(); publish(); break;
     case 'open-download': { const item = downloads.find(d => d.id === payload); if (item?.status === 'completed' && item.path && fs.existsSync(item.path)) shell.openPath(item.path); break; }
     case 'show-download': { const item = downloads.find(d => d.id === payload); if (item?.status === 'completed' && item.path && fs.existsSync(item.path)) shell.showItemInFolder(item.path); break; }
-    case 'cancel-download': { const item = activeDownloads.get(payload); if (item && !item.isDestroyed()) item.cancel(); break; }
+    case 'cancel-download': { const item = activeDownloads.get(payload); if (item) item.cancel(); break; }
     case 'bookmark': toggleBookmark(); break;
     case 'open-bookmark': if (tab) navigate(tab, payload); break;
     case 'remove-bookmark': bookmarks = bookmarks.filter(b => b.url !== payload); saveData(); publish(); break;
